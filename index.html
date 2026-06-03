@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXT TOPPER FREE BATCH WEBSITE</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f9fafb; color: #111827; }
+
+        /* Header */
+        .header { position: sticky; top: 0; z-index: 50; background: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .header-container { max-width: 1280px; margin: 0 auto; }
+        .header-mobile { display: flex; flex-direction: column; padding: 16px; gap: 12px; }
+        .header-desktop { display: none; }
+        .logo { height: 32px; object-fit: contain; cursor: pointer; transition: transform 0.3s; }
+        .logo:hover { transform: scale(1.05); }
+        .search-wrapper { position: relative; width: 100%; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px; z-index: 10; }
+        .search-input { width: 100%; height: 36px; padding-left: 40px; padding-right: 12px; background: #f3f4f6; border: none; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s; }
+        .search-input:focus { background: white; box-shadow: 0 0 0 2px #3b82f6; }
+        .search-results { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; max-height: 400px; overflow-y: auto; z-index: 100; }
+        .search-result-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; transition: background 0.2s; }
+        .search-result-item:hover { background: #f9fafb; }
+        .search-result-thumb { width: 56px; height: 40px; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+        .search-result-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .search-result-item:hover .search-result-thumb img { transform: scale(1.1); }
+        .search-result-title { flex: 1; font-size: 13px; font-weight: 600; color: #374151; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .search-result-item:hover .search-result-title { color: #2563eb; }
+
+        /* Main */
+        .main { max-width: 1280px; margin: 0 auto; padding: 24px 16px 48px; }
+
+        /* Carousel */
+        .carousel { position: relative; width: 100%; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 24px; }
+        .carousel-track { display: flex; transition: transform 0.5s ease; }
+        .carousel-slide { min-width: 100%; }
+        .carousel-slide img { width: 100%; height: auto; display: block; }
+
+        /* Section */
+        .section { margin-bottom: 48px; }
+        .section-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; color: #1f2937; letter-spacing: -0.3px; }
+        .section-title i { font-size: 20px; }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+        /* Card */
+        .card { background: white; border: none; border-radius: 16px; overflow: hidden; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 0; }
+        .card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.12); transform: translateY(-4px); }
+        .card-thumb { position: relative; aspect-ratio: 16/9; overflow: hidden; background: #111; border-radius: 12px; margin: 12px 12px 0 12px; }
+        .card-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .card:hover .card-thumb img { transform: scale(1.05); }
+        .card-badge { position: absolute; top: 8px; left: 8px; background: #ff4500; color: white; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 5px; text-transform: capitalize; box-shadow: 0 2px 6px rgba(255,69,0,0.4); }
+        .card-badge.trending { background: #ff4500; }
+        .card-price { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); color: white; font-size: 13px; font-weight: 800; padding: 6px 12px; border-radius: 8px; display: flex; align-items: center; gap: 6px; }
+        .card-price .old { text-decoration: line-through; opacity: 0.6; font-size: 11px; }
+        .card-price .new { color: #fbbf24; }
+        .card-body { padding: 16px; }
+        .card-title { font-size: 14px; font-weight: 700; color: #2563eb; line-height: 1.4; margin-bottom: 16px; text-transform: uppercase; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card:hover .card-title { color: #1e40af; }
+        .card-validity { font-size: 13px; color: #6b7280; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+        .card-validity i { color: #3b82f6; font-size: 14px; }
+        .card-validity span { font-weight: 600; color: #1e40af; }
+        .card-actions { display: flex; gap: 10px; }
+        .card-btn { flex: 1; padding: 12px 0; border-radius: 8px; font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; border: none; }
+        .btn-explore { background: white; border: 2px solid #e5e7eb; color: #374151; }
+        .btn-explore:hover { background: #f9fafb; border-color: #2563eb; color: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn-explore i { font-size: 15px; }
+        .btn-enroll { background: #111827; color: white; }
+        .btn-enroll:hover { background: #1f2937; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(17,24,39,0.4); }
+        .btn-enroll i { font-size: 15px; }
+        .btn-enrolled { background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-enrolled:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
+        .btn-lets-study { background: #111827; color: white; flex: 1; font-size: 15px; font-weight: 700; border-radius: 10px; }
+        .btn-lets-study:hover { background: #1f2937; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(17,24,39,0.4); }
+        .btn-lets-study i { font-size: 16px; }
+
+        /* Footer */
+        .footer { display: none; }
+
+        /* Desktop */
+        @media (min-width: 768px) {
+          .header-mobile { display: none; }
+          .header-desktop { display: flex; align-items: center; height: 64px; padding: 0 24px; gap: 32px; }
+          .search-wrapper { width: 320px; }
+          .grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+          .banner-content { justify-content: space-between; }
+          .banner-icon img { width: 70px; height: 70px; }
+          .banner-text h3 { font-size: 18px; }
+          .banner-text p { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="header-container">
+        <!-- Mobile Header -->
+        <div class="header-mobile">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <img src="https://decicqog4ulhy.cloudfront.net/0/admin_v2/uploads/courses/thumbnail/2671188_1_logo.jpg" alt="The Rank Forge" class="logo" onclick="window.location.href='/'">
+            </div>
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="search" class="search-input" placeholder="What are you looking for..." id="searchInputMobile">
+                <div id="searchResultsMobile" class="search-results" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Desktop Header -->
+        <div class="header-desktop">
+            <img src="https://decicqog4ulhy.cloudfront.net/0/admin_v2/uploads/courses/thumbnail/2671188_1_logo.jpg" alt="The Rank Forge" class="logo" onclick="window.location.href='/'">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="search" class="search-input" placeholder="What are you looking for..." id="searchInputDesktop">
+                <div id="searchResultsDesktop" class="search-results" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="main">
+    <!-- Carousel -->
+    <div class="carousel">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide">
+                <img src="https://dxixtlyravvxx.cloudfront.net/1772100600/admin_v2/thumbnails//147818_131_drona%20neet%20banner%20website.jpg" alt="Banner 1">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://dxixtlyravvxx.cloudfront.net/1772100600/admin_v2/thumbnails//147818_131_drona%20neet%20banner%20website.jpg" alt="Banner 2">
+            </div>
+        </div>
+    </div>
+
+    <!-- Our Courses Section -->
+    <section class="section">
+        <h2 class="section-title">
+            <i class="fas fa-book-open"></i> Our Courses
+        </h2>
+        <div class="grid" id="ourCoursesGrid"></div>
+    </section>
+
+    <!-- Featured Courses Section -->
+    <section class="section">
+        <h2 class="section-title">
+            <svg width="24" height
+                    ="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Big sparkle -->
+                <path d="M12 2C12 2 12.8 7.2 14.5 9.5C16.8 11.2 22 12 22 12C22 12 16.8 12.8 14.5 14.5C12.8 16.8 12 22 12 22C12 22 11.2 16.8 9.5 14.5C7.2 12.8 2 12 2 12C2 12 7.2 11.2 9.5 9.5C11.2 7.2 12 2 12 2Z" fill="#f59e0b"/>
+                <!-- Small sparkle top-right -->
+                <path d="M19 2C19 2 19.4 4.1 20.2 4.8C21 5.6 23 6 23 6C23 6 21 6.4 20.2 7.2C19.4 8 19 10 19 10C19 10 18.6 8 17.8 7.2C17 6.4 15 6 15 6C15 6 17 5.6 17.8 4.8C18.6 4.1 19 2 19 2Z" fill="#f59e0b"/>
+                <!-- Small sparkle bottom-left -->
+                <path d="M5 14C5 14 5.3 15.5 5.9 16.1C6.5 16.7 8 17 8 17C8 17 6.5 17.3 5.9 17.9C5.3 18.5 5 20 5 20C5 20 4.7 18.5 4.1 17.9C3.5 17.3 2 17 2 17C2 17 3.5 16.7 4.1 16.1C4.7 15.5 5 14 5 14Z" fill="#f59e0b"/>
+            </svg>
+            Featured Courses
+        </h2>
+        <div class="grid" id="featuredCoursesGrid"></div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <img src="https://decicqog4ulhy.cloudfront.net/0/admin_v2/uploads/courses/thumbnail/2671188_1_logo.jpg" alt="The Rank Forge" style="height: 48px; object-fit: contain; cursor: pointer; opacity: 0.8;" onclick="window.location.href='/'">
+</footer>
+
+<script>
+    // Course Data
+    const OUR_COURSES = [
+      {id:183,title:"NIRMAAN Summer Camp 2026",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/1583344_125_Nirmaan%20Summer%20Camp%20App%20Banners09%20%281%29.jpg",is_trending:"Trending",end_date:"1806431399"},
+      {id:177,title:"NIRMAAN BATCH Class 8th",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/6956338_125_Nirbhay%20Batch%20Class%208th%20App%20Banners09.jpg",is_trending:"Trending",end_date:"1806431399"},
+      {id:178,title:"AARAMBH 9th BATCH 26-27",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/6571450_125_aarambh%202027%20class%209th%20banner%20app.png",is_trending:"Trending",end_date:"1814293800"},
+      {id:179,title:"AARAMBH PLUS 9th BATCH 26-27",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/2788484_125_aarambh%20plus%202027%20class%209th%20banner%20app.png",is_trending:"Trending",end_date:"1814293800"},
+      {id:176,title:"AARAMBH 10th BATCH 26-27",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/4628574_125_aarambh%20banner%20app%202026%202.jpg",is_trending:"Trending",end_date:"1814380199"},
+      {id:107,title:"Science (PCMB) 11th - PRARAMBH 2026-27",thumbnail:"https://dxixtlyravvxx.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/2159678_125_Science%20Prarambh%20Batch%20Class%2011th%20App%20Banners.jpg",is_trending:"Trending",end_date:"1811442600"},
+      {id:108,title:"Commerce 11th - PRARAMBH 2026-27",thumbnail:"https://dxixtlyravvxx.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/1338423_125_Commerce%20Prarambh%20Batch%20Class%2011th%20App%20Banners.jpg",is_trending:"Trending",end_date:"1806690599"},
+      {id:109,title:"Humanities 11th - PRARAMBH 2026-27",thumbnail:"https://dxixtlyravvxx.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/2936192_125_Humanities%20Prarambh%20Batch%20Class%2011th%20App%20Banners.jpg",is_trending:"Trending",end_date:"1815503400"},
+      {id:112,title:"Science (PCMB) 11th - PRARAMBH PLUS 2026-27",thumbnail:"https://dxixtlyravvxx.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/1046248_125_Science%20Plus%20Prarambh%20Batch%20Class%2011th%20App%20Banners.jpg",is_trending:"Trending",end_date:"1814380199"},
+      {id:110,title:"Commerce 11th - PRARAMBH PLUS 2026-27",thumbnail:"https://dxixtlyravvxx.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/486342_125_Commerce%20Plus%20Prarambh%20Batch%20Class%2011th%20App%20Banners.jpg",is_trending:"Trending",end_date:"1814380199"},
+      {id:111,title:"Humanities 11th - PRARAMBH PLUS 2026-27",thumbnail:"https://dxixtlyravvxx.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/3557768_125_Humanities%20Plus%20Prarambh%20Batch%20Class%2011th%20App%20Banners.jpg",is_trending:"Trending",end_date:"1814380199"},
+      {id:103,title:"Science (PCMB)12th - PRARAMBH 26-27",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/5881826_125_Science%20Prarambh%20Batch%20Class%2012th%20App%20Banners%20%281%29.jpg",is_trending:"Trending",end_date:"1806863400"},
+      {id:101,title:"Commerce 12th - PRARAMBH 26-27",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/4018906_125_Commerce%20Prarambh%20Batch%20Class%2012th%20App%20Banners.jpg",is_trending:"Trending",end_date:"1806517800"},
+      {id:105,title:"Humanities 12th - PRARAMBH 26-27",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/72304442459_HUMANITIES%20Prarambh%20Batch%20Class%2012th%20Early%20Bird%20Session%202026-27%20Banners09.jpg",is_trending:"Trending",end_date:"1806431400"},
+      {id:104,title:"Science (PCMB) 12th - PRARAMBH Pro 26-27",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/1890800_125_Science%20Prarambh%20Batch%20Class%2012th%20PRO%20App%20Banners.jpg",is_trending:"",end_date:"1806517800"},
+      {id:102,title:"Commerce 12th - PRARAMBH Pro 26-27",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/7402116_125_Commerce%20Prarambh%20Batch%20Class%2012th%20PRO%20App%20Banners.jpg",is_trending:"",end_date:"1806517800"},
+      {id:106,title:"Humanities 12th - PRARAMBH Pro 26-27",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/3207649_125_IMG_5291.jpeg",is_trending:"",end_date:"1811701800"},
+      {id:122,title:"CUET (Science)",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/346473_125_Science%20CUET%20Batch%20Class%2012th%20PRO%20App%20Banners.jpg",is_trending:"Trending",end_date:"1814293800"},
+      {id:123,title:"CUET (Humanities)",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/6877813_125_Humanities%20CUET%20Batch%20Class%2012th%20PRO%20App%20Banners.jpg",is_trending:"Trending",end_date:"1814293800"},
+      {id:124,title:"CUET (Commerce)",thumbnail:"https://dylnd2lqy6eys.cloudfront.net/1770981347/admin_v2/uploads/courses/thumbnail/721208_125_Commerce%20CUET%20Batch%20Class%2012th%20PRO%20App%20Banners.jpg",is_trending:"Trending",end_date:"1814293800"}
+    ];
+
+    const FEATURED_COURSES = [
+      {id:62,title:"AARAMBH 2.O 10th BATCH 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/285939929246_10th%20aarambh%202.0%20banner%20app.jpg",is_trending:"Trending"},
+      {id:64,title:"AARAMBH 2.O 9th BATCH 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/152792333113_9th%20aarambh%202.0%20banner%20app.jpg",is_trending:"Trending"},
+      {id:78,title:"Abhay 10th Batch 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/626308539904_abhay%2010th%20banner%20app%202026.png",is_trending:"Trending"},
+      {id:81,title:"Abhay 9th Batch 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/151836440589_abhay%209th%20banner%20app%202026.png",is_trending:"Trending"},
+      {id:83,title:"UP Board ABHAY 10th (हिंदी माध्यम) 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/641788840605_Abhay%20UP%20Board%20%281%29.png",is_trending:"Trending"},
+      {id:84,title:"Bihar Board ABHAY 10th(हिंदी माध्यम) 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/777873140606_Abhay%20Bihar%20Board%20%281%29.png",is_trending:"Trending"},
+      {id:85,title:"Science 11th (PCMB) - NIRBHAY 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/443372940688_Nirbhay%20Class%2011th%20Science.jpg",is_trending:"Trending"},
+      {id:86,title:"Science 12th (PCMB) - NIRBHAY 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/194079640690_Nirbhay%20Class%2012th%20Science.jpg",is_trending:"Trending"},
+      {id:87,title:"Humanities 11th - NIRBHAY 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/552700840691_Nirbhay%20Class%2011th%20Humanities.jpg",is_trending:"Trending"},
+      {id:88,title:"Humanities 12th - NIRBHAY 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/547817640692_Nirbhay%20Class%2012th%20Humanities.jpg",is_trending:"Trending"},
+      {id:89,title:"Commerce 11th - NIRBHAY 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/782676440693_Nirbhay%20Class%2011th%20Commerce.jpg",is_trending:"Trending"},
+      {id:90,title:"Commerce12th - NIRBHAY 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/637993340694_Nirbhay%20Class%2012th%20Commerce.jpg",is_trending:"Trending"},
+      {id:91,title:"Commerce NIRBHAY Pro 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/770214940695_WhatsApp%20Image%202025-11-23%20at%2018.46.10.jpeg",is_trending:"Trending"},
+      {id:92,title:"Science NIRBHAY Pro 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/466570440696_Nirbhay%20Science%20CUET09.jpg",is_trending:"Trending"},
+      {id:93,title:"Humanities NIRBHAY Pro 2025-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/110723540697_Prarambh%20BATCh%20Humanites09.jpg",is_trending:"Trending"},
+      {id:53,title:"Prarambh Humanities 11th 25-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/216113028517_Prarambh%20BATCh%20Humanities%2011.png",is_trending:"Trending"},
+      {id:55,title:"Prarambh Science 11th (PCMB) 25-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/183130728609_Prarambh%20BATCh%20Science%20Class%2011.png",is_trending:"Trending"},
+      {id:56,title:"Prarambh Commerce 11th 25-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/737975028610_Prarambh%20BATCh%20Commerce%2011.png",is_trending:"Trending"},
+      {id:58,title:"Prarambh Science 12th (PCMB) 25-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/337551428612_Prarambh%20BATCh%20Science%2012.jpg",is_trending:"Trending"},
+      {id:57,title:"Prarambh Commerce 12th 25-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/677190628611_Prarambh%20BATCh%20Commerce%2012.jpg",is_trending:"Trending"},
+      {id:59,title:"Prarambh Humanities 12th 25-26",thumbnail:"https://dxixtlyravvxx.cloudfront.net/540/admin_v1/bundle_management/course/205624828613_Prarambh%20BATCh%20Humanities%2012.jpg",is_trending:"Trending"}
+    ];
+
+    // Calculate validity days
+    function calcValidity(endDate) {
+      if (!endDate) return '';
+      const diff = new Date(parseInt(endDate) * 1000) - Date.now();
+      if (diff <= 0) return 'Expired';
+      return Math.ceil(diff / 86400000) + ' days';
+    }
+
+    // Build course card
+    function buildCard(course) {
+      const isEnrolled = localStorage.getItem('enrolled_' + course.id) === 'true';
+      const validity = course.end_date ? calcValidity(course.end_date) : '';
+
+      return `
+        <div class="card" id="card-${course.id}" onclick="window.location.href='/next/next.php?id=nexttoppers_${course.id}'">
+          <div class="card-thumb">
+            <img src="${course.thumbnail}" alt="${course.title}" loading="lazy">
+            ${course.is_trending === 'Trending' ? '<span class="card-badge trending">Trending</span>' : ''}
+          </div>
+          <div class="card-body">
+            <div class="card-title">${course.title}</div>
+            ${validity ? `<div class="card-validity"><i class="fas fa-clock"></i> Validity: <span>${validity}</span></div>` : '<div style="height: 18px;"></div>'}
+            <div class="card-actions">
+              ${isEnrolled ? `
+                <button class="card-btn btn-lets-study" onclick="event.stopPropagation();window.location.href='/next/next.php?id=nexttoppers_${course.id}'">
+                  <i class="fas fa-circle-play"></i> Let's Study
+                </button>
+              ` : `
+                <button class="card-btn btn-explore" onclick="event.stopPropagation();window.location.href='/next/next.php?id=nexttoppers_${course.id}'">
+                  <i class="fas fa-book-open"></i> Explore
+                </button>
+                <button class="card-btn btn-enroll" onclick="event.stopPropagation();enrollCourse(${course.id}, this)">
+                  <i class="fas fa-graduation-cap"></i> Enroll Now
+                </button>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Enroll function
+    function enrollCourse(id, btn) {
+      localStorage.setItem('enrolled_' + id, 'true');
+      const actions = btn.closest('.card-actions');
+      actions.innerHTML = `
+        <button class="card-btn btn-lets-study" onclick="event.stopPropagation();window.location.href='/next/next.php?id=nexttoppers_${id}'">
+          <i class="fas fa-circle-play"></i> Let's Study
+        </button>
+      `;
+    }
+
+    // Search functionality
+    function setupSearch(inputId, resultsId) {
+      const input = document.getElementById(inputId);
+      const results = document.getElementById(resultsId);
+      const allCourses = [...OUR_COURSES, ...FEATURED_COURSES];
+
+      input.addEventListener('input', (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        if (!query) {
+          results.style.display = 'none';
+          return;
+        }
+
+        const filtered = allCourses.filter(c => c.title.toLowerCase().includes(query));
+        if (filtered.length > 0) {
+          results.innerHTML = filtered.map(c => `
+            <div class="search-result-item" onclick="window.location.href='/next/next.php?id=nexttoppers_${c.id}'">
+              <div class="search-result-thumb">
+                <img src="${c.thumbnail}" alt="${c.title}">
+              </div>
+              <span class="search-result-title">${c.title}</span>
+              <i class="fas fa-arrow-right" style="font-size: 12px; color: #9ca3af;"></i>
+            </div>
+          `).join('');
+          results.style.display = 'block';
+        } else {
+          results.style.display = 'none';
+        }
+      });
+
+      input.addEventListener('focus', () => {
+        if (input.value.trim() && results.innerHTML) {
+          results.style.display = 'block';
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !results.contains(e.target)) {
+          results.style.display = 'none';
+        }
+      });
+    }
+
+    // Carousel auto-play
+    let carouselIndex = 0;
+    function autoPlayCarousel() {F
+      const track = document.getElementById('carouselTrack');
+      carouselIndex = (carouselIndex + 1) % 2;
+      track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+    }
+    setInterval(autoPlayCarousel, 3000);
+
+    // Initialize
+    document.getElementById('ourCoursesGrid').innerHTML = OUR_COURSES.map(buildCard).join('');
+    document.getElementById('featuredCoursesGrid').innerHTML = FEATURED_COURSES.map(buildCard).join('');
+    setupSearch('searchInputMobile', 'searchResultsMobile');
+    setupSearch('searchInputDesktop', 'searchResultsDesktop');
+</script>
+<script src="/js/firebase-config.js"></script>
+<script src="/js/notifications.js"></script>
+</body>
+</html>
